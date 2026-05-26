@@ -1,3 +1,7 @@
+param (
+    [string]$Action
+)
+
 # Set console output and input to UTF-8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::InputEncoding = [System.Text.Encoding]::UTF8
@@ -26,18 +30,40 @@ if ([string]::IsNullOrEmpty($script_dir)) {
 }
 $sibling_path = Join-Path $script_dir "fluenty"
 
+# Interactive Menu to choose action
+$action_choice = $Action
+if ([string]::IsNullOrEmpty($action_choice)) {
+    Write-Host (([char[]](10,1042,1099,1073,1077,1088,1080,1090,1077,32,1076,1077,1081,1089,1090,1074,1080,1077,58) -join "")) -ForegroundColor Cyan
+    Write-Host (([char[]](91,49,93,32,1055,1088,1086,1087,1072,1090,1095,1080,1090,1100,32,1091,1089,1090,1072,1085,1086,1074,1083,1077,1085,1085,1091,1102,32,1090,1077,1084,1091,32,70,108,117,101,110,116,121,32,40,1083,1086,1082,1072,1083,1100,1085,1086,41) -join ""))
+    Write-Host (([char[]](91,50,93,32,1057,1082,1072,1095,1072,1090,1100,44,32,1091,1089,1090,1072,1085,1086,1074,1080,1090,1100,32,1080,32,1087,1088,1086,1087,1072,1090,1095,1080,1090,1100,32,1089,1074,1077,1078,1091,1102,32,1090,1077,1084,1091,32,70,108,117,101,110,116,121,32,40,1089,32,71,105,116,72,117,98,41) -join ""))
+    $choice = Read-Host (([char[]](1042,1074,1077,1076,1080,1090,1077,32,1085,1086,1084,1077,1088,32,1076,1077,1081,1089,1090,1074,1080,1103,32,40,49,32,1080,1083,1080,32,50,41,58,32) -join ""))
+    if ($choice -eq "1") {
+        $action_choice = "Patch"
+    } elseif ($choice -eq "2") {
+        $action_choice = "Install"
+    } else {
+        Write-Host (([char[]](1053,1077,1074,1077,1088,1085,1099,1081,32,1074,1099,1073,1086,1088,46,32,1042,1099,1093,1086,1076,46) -join "")) -ForegroundColor Red
+        Read-Host (([char[]](10,1053,1072,1078,1084,1080,1090,1077,32,69,110,116,101,114,32,1076,1083,1103,32,1074,1099,1093,1086,1076,1072,46,46,46) -join ""))
+        Exit
+    }
+}
+
 $theme_dir = $null
 
-if (Test-Path $steam_skin_path) {
+if ($action_choice -eq "Install") {
     $theme_dir = $steam_skin_path
-} elseif (Test-Path $local_workspace_path) {
-    $theme_dir = $local_workspace_path
-} elseif (Test-Path $sibling_path) {
-    $theme_dir = $sibling_path
 } else {
-    $potential_path = Join-Path $PSScriptRoot "fluenty"
-    if (Test-Path $potential_path) {
-        $theme_dir = $potential_path
+    if (Test-Path $steam_skin_path) {
+        $theme_dir = $steam_skin_path
+    } elseif (Test-Path $local_workspace_path) {
+        $theme_dir = $local_workspace_path
+    } elseif (Test-Path $sibling_path) {
+        $theme_dir = $sibling_path
+    } else {
+        $potential_path = Join-Path $PSScriptRoot "fluenty"
+        if (Test-Path $potential_path) {
+            $theme_dir = $potential_path
+        }
     }
 }
 
@@ -64,17 +90,70 @@ if (-not $isAdmin -and $theme_dir.StartsWith("C:\Program Files", [System.StringC
     Write-Host (([char[]](1055,1077,1088,1077,1079,1072,1087,1091,1089,1082,32,1086,1090,32,1080,1084,1077,1085,1080,32,1072,1076,1084,1080,1085,1080,1089,1090,1088,1072,1090,1086,1088,1072,46,46,46) -join "")) -ForegroundColor Yellow
     
     if ($PSCommandPath) {
-        Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+        Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" -Action $action_choice" -Verb RunAs
     } else {
-        $online_cmd = "irm https://raw.githubusercontent.com/DarkAssassinUA/fluenty-luatools-patcher/main/patch_fluenty.ps1 | iex"
+        $online_cmd = "`$Action='$action_choice'; irm https://raw.githubusercontent.com/DarkAssassinUA/fluenty-luatools-patcher/main/patch_fluenty.ps1 | iex"
         Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"$online_cmd`"" -Verb RunAs
     }
     Exit
 }
 
+# 3. If action is Install, download and extract theme first
+if ($action_choice -eq "Install") {
+    Write-Host (([char[]](1057,1082,1072,1095,1080,1074,1072,1085,1080,1077,32,1072,1088,1093,1080,1074,1072,32,1090,1077,1084,1099,32,70,108,117,101,110,116,121,32,1089,32,71,105,116,72,117,98,46,46,46) -join "")) -ForegroundColor Cyan
+    $zip_url = "https://github.com/Hexality/Fluenty/archive/refs/heads/main.zip"
+    $temp_zip = Join-Path $env:TEMP "fluenty-main.zip"
+    try {
+        Invoke-WebRequest -Uri $zip_url -OutFile $temp_zip -ErrorAction Stop
+    } catch {
+        Write-Host (([char[]](1054,1096,1080,1073,1082,1072,32,1087,1088,1080,32,1089,1082,1072,1095,1080,1074,1072,1085,1080,1080,32,1090,1077,1084,1099,58,32) -join "") + $_) -ForegroundColor Red
+        Read-Host (([char[]](10,1053,1072,1078,1084,1080,1090,1077,32,69,110,116,101,114,32,1076,1083,1103,32,1074,1099,1093,1086,1076,1072,46,46,46) -join ""))
+        Exit
+    }
+
+    Write-Host (([char[]](1056,1072,1089,1087,1072,1082,1086,1074,1082,1072,32,1072,1088,1093,1080,1074,1072,46,46,46) -join "")) -ForegroundColor Cyan
+    $temp_extract = Join-Path $env:TEMP "fluenty-extract"
+    try {
+        if (Test-Path $temp_extract) {
+            Remove-Item -Recurse -Force $temp_extract -ErrorAction SilentlyContinue
+        }
+        Expand-Archive -Path $temp_zip -DestinationPath $temp_extract -Force -ErrorAction Stop
+    } catch {
+        Write-Host (([char[]](1054,1096,1080,1073,1082,1072,32,1087,1088,1080,32,1088,1072,1089,1087,1072,1082,1086,1074,1082,1077,32,1072,1088,1093,1080,1074,1072,58,32) -join "") + $_) -ForegroundColor Red
+        Read-Host (([char[]](10,1053,1072,1078,1084,1080,1090,1077,32,69,110,116,101,114,32,1076,1083,1103,32,1074,1099,1093,1086,1076,1072,46,46,46) -join ""))
+        Exit
+    }
+
+    Write-Host (([char[]](1059,1089,1090,1072,1085,1086,1074,1082,1072,32,1090,1077,1084,1099,32,1074,32,1087,1072,1087,1082,1091,32,1089,1082,1080,1085,1086,1074,46,46,46) -join "")) -ForegroundColor Cyan
+    try {
+        $extracted_theme_dir = Join-Path $temp_extract "Fluenty-main"
+        if (-not (Test-Path $extracted_theme_dir)) {
+            $subdirs = Get-ChildItem -Directory -Path $temp_extract
+            if ($subdirs.Count -gt 0) {
+                $extracted_theme_dir = $subdirs[0].FullName
+            }
+        }
+
+        if (Test-Path $theme_dir) {
+            Remove-Item -Recurse -Force $theme_dir -ErrorAction Stop
+        }
+        New-Item -ItemType Directory -Force -Path $theme_dir -ErrorAction Stop | Out-Null
+        Copy-Item -Path "$extracted_theme_dir\*" -Destination $theme_dir -Recurse -Force -ErrorAction Stop
+
+        Remove-Item -Path $temp_zip -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $temp_extract -Recurse -Force -ErrorAction SilentlyContinue
+
+        Write-Host (([char[]](1058,1077,1084,1072,32,70,108,117,101,110,116,121,32,1091,1089,1087,1077,1096,1085,1086,32,1089,1082,1072,1095,1072,1085,1072,32,1080,32,1091,1089,1090,1072,1085,1086,1074,1083,1077,1085,1072,33) -join "")) -ForegroundColor Green
+    } catch {
+        Write-Host (([char[]](1054,1096,1080,1073,1082,1072,32,1087,1088,1080,32,1091,1089,1090,1072,1085,1086,1074,1082,1077,32,1090,1077,1084,1099,58,32) -join "") + $_) -ForegroundColor Red
+        Read-Host (([char[]](10,1053,1072,1078,1084,1080,1090,1077,32,69,110,116,101,114,32,1076,1083,1103,32,1074,1099,1093,1086,1076,1072,46,46,46) -join ""))
+        Exit
+    }
+}
+
 Write-Host (([char[]](1040,1082,1090,1080,1074,1085,1072,1103,32,1087,1072,1087,1082,1072,32,1090,1077,1084,1099,32,1086,1073,1085,1072,1088,1091,1078,1077,1085,1072,58,10) -join "") + $theme_dir + "`r`n") -ForegroundColor Green
 
-# 3. Check installed theme version
+# 4. Check installed theme version
 $installed_version = $null
 $skin_json_path = Join-Path $theme_dir "skin.json"
 if (Test-Path $skin_json_path) {
@@ -137,8 +216,8 @@ if (Test-Path $sidebar_path) {
             'text">Activity</div>' = 'text">' + ([char[]](1040,1082,1090,1080,1074,1085,1086,1089,1090,1100) -join "") + '</div>'
             'title="Downloads"' = 'title="' + ([char[]](1047,1072,1075,1088,1091,1079,1082,1080) -join "") + '"'
             'text">Downloads</div>' = 'text">' + ([char[]](1047,1072,1075,1088,1091,1079,1082,1080) -join "") + '</div>'
-            'title="Friends"' = 'title="' + ([char[]](1044,1088,1091,1079,1100,1103) -join "") + '"'
-            'text">Friends</div>' = 'text">' + ([char[]](1044,1088,1091,1079,1100,1103) -join "") + '</div>'
+            'title="Friends"' = 'title="' + ([char[]](1044,1088,1091,1100,1103) -join "") + '"'
+            'text">Friends</div>' = 'text">' + ([char[]](1044,1088,1091,1100,1103) -join "") + '</div>'
             'title="Settings"' = 'title="' + ([char[]](1053,1072,1089,1090,1088,1086,1081,1082,1080) -join "") + '"'
             'text">Settings</div>' = 'text">' + ([char[]](1053,1072,1089,1090,1088,1086,1081,1082,1080) -join "") + '</div>'
         }
