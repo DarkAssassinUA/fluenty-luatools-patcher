@@ -16,6 +16,16 @@ Write-Host (([char[]](32,32,32,32,32,32,1040,1074,1090,1086,1088,58,32,76,101,32
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 $steam_skin_path = "C:\Program Files (x86)\Steam\steamui\skins\fluenty"
+$regPath = Get-ItemProperty -Path "HKCU:\Software\Valve\Steam" -Name "SteamPath" -ErrorAction SilentlyContinue
+if ($regPath -and $regPath.SteamPath) {
+    $steamDir = $regPath.SteamPath -replace '/', '\'
+    $steam_skin_path = Join-Path $steamDir "steamui\skins\fluenty"
+} else {
+    $regPath2 = Get-ItemProperty -Path "HKLM:\Software\Wow6432Node\Valve\Steam" -Name "InstallPath" -ErrorAction SilentlyContinue
+    if ($regPath2 -and $regPath2.InstallPath) {
+        $steam_skin_path = Join-Path $regPath2.InstallPath "steamui\skins\fluenty"
+    }
+}
 $local_workspace_path = "g:\work\fluenty"
 
 $script_dir = $null
@@ -85,7 +95,15 @@ if (-not $isAdmin) {
 }
 
 # 2. Check admin privileges before proceeding and elevate if needed
-if (-not $isAdmin -and $theme_dir.StartsWith("C:\Program Files", [System.StringComparison]::OrdinalIgnoreCase)) {
+$isProgramFiles = $false
+if ($theme_dir) {
+    $pf = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::ProgramFiles)
+    $pf86 = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::ProgramFilesX86)
+    if (($pf -and $theme_dir.StartsWith($pf, [System.StringComparison]::OrdinalIgnoreCase)) -or ($pf86 -and $theme_dir.StartsWith($pf86, [System.StringComparison]::OrdinalIgnoreCase))) {
+        $isProgramFiles = $true
+    }
+}
+if (-not $isAdmin -and $isProgramFiles) {
     Write-Host (([char[]](1044,1083,1103,32,1084,1086,1076,1080,1092,1080,1082,1072,1094,1080,1080,32,1092,1072,1081,1083,1086,1074,32,1090,1077,1084,1099,32,1074,32,80,114,111,103,114,97,109,32,70,105,108,101,115,32,1090,1088,1077,1073,1091,1102,1090,1089,1103,32,1087,1088,1072,1074,1072,32,1072,1076,1084,1080,1085,1080,1089,1090,1088,1072,1090,1086,1088,1072,46) -join "")) -ForegroundColor Yellow
     Write-Host (([char[]](1055,1077,1088,1077,1079,1072,1087,1091,1089,1082,32,1086,1090,32,1080,1084,1077,1085,1080,32,1072,1076,1084,1080,1085,1080,1089,1090,1088,1072,1090,1086,1088,1072,46,46,46) -join "")) -ForegroundColor Yellow
     
