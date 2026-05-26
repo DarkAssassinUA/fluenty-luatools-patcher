@@ -6,7 +6,7 @@ param (
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::InputEncoding = [System.Text.Encoding]::UTF8
 
-$PATCHER_VERSION = "1.3"
+$PATCHER_VERSION = "1.4"
 $SUPPORTED_FLUENTY_VERSION = "1.14.0"
 
 Write-Host "==========================================================" -ForegroundColor Cyan
@@ -229,14 +229,14 @@ if (Test-Path $sidebar_path) {
             'text">Collections</div>' = 'text">' + ([char[]](1050,1086,1083,1083,1077,1082,1094,1080,1080) -join "") + '</div>'
             'title="Community"' = 'title="' + ([char[]](1057,1086,1086,1073,1097,1077,1089,1090,1074,1086) -join "") + '"'
             'text">Community</div>' = 'text">' + ([char[]](1057,1086,1086,1073,1097,1077,1089,1090,1074,1086) -join "") + '</div>'
-            'title="Market"' = 'title="' + ([char[]](1058,1086,1088,1075,1086,1074,1072,1103,32,1087,1083,1086,1097,1072,1076,1082,1072) -join "") + '"'
-            'text">Market</div>' = 'text">' + ([char[]](1058,1086,1088,1075,1086,1074,1072,1103,32,1087,1083,1086,1097,1072,1076,1082,1072) -join "") + '</div>'
+            'title="Market"' = 'title="' + ([char[]](1058,1055) -join "") + '"'
+            'text">Market</div>' = 'text">' + ([char[]](1058,1055) -join "") + '</div>'
             'title="Activity"' = 'title="' + ([char[]](1040,1082,1090,1080,1074,1085,1086,1089,1090,1100) -join "") + '"'
             'text">Activity</div>' = 'text">' + ([char[]](1040,1082,1090,1080,1074,1085,1086,1089,1090,1100) -join "") + '</div>'
             'title="Downloads"' = 'title="' + ([char[]](1047,1072,1075,1088,1091,1079,1082,1080) -join "") + '"'
             'text">Downloads</div>' = 'text">' + ([char[]](1047,1072,1075,1088,1091,1079,1082,1080) -join "") + '</div>'
-            'title="Friends"' = 'title="' + ([char[]](1044,1088,1091,1100,1103) -join "") + '"'
-            'text">Friends</div>' = 'text">' + ([char[]](1044,1088,1091,1100,1103) -join "") + '</div>'
+            'title="Friends"' = 'title="' + ([char[]](1044,1088,1091,1079,1100,1103) -join "") + '"'
+            'text">Friends</div>' = 'text">' + ([char[]](1044,1088,1091,1079,1100,1103) -join "") + '</div>'
             'title="Settings"' = 'title="' + ([char[]](1053,1072,1089,1090,1088,1086,1081,1082,1080) -join "") + '"'
             'text">Settings</div>' = 'text">' + ([char[]](1053,1072,1089,1090,1088,1086,1081,1082,1080) -join "") + '</div>'
         }
@@ -449,36 +449,6 @@ $css_content = @'
 	align-items: center !important;
 	gap: 16px !important;
 	flex-wrap: wrap !important;
-	padding-top: 26px !important;
-}
-
-.customGameButtons .luatools-button,
-.customGameButtons .luatools-button:hover,
-.customGameButtons .luatools-button:focus,
-.customGameButtons .luatools-button:active {
-	position: static !important;
-	display: inline-flex !important;
-	align-items: center !important;
-}
-
-.customGameButtons .luatools-button:hover,
-.customGameButtons .luatools-button.active-focus,
-.customGameButtons .luatools-restart-button:hover,
-.customGameButtons .luatools-restart-button.active-focus {
-	transform: none !important;
-}
-
-.customGameButtons .luatools-pills-container {
-	position: absolute !important;
-	top: 4px !important;
-	left: 0 !important;
-	transform: none !important;
-	display: inline-flex !important;
-	gap: 6px !important;
-	align-items: center !important;
-	pointer-events: none !important;
-	white-space: nowrap !important;
-	z-index: 5 !important;
 }
 
 .customGameButtons .luatools-pill {
