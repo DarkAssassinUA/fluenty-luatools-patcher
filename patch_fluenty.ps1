@@ -1,4 +1,4 @@
-﻿# Set console output and input to UTF-8
+# Set console output and input to UTF-8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::InputEncoding = [System.Text.Encoding]::UTF8
 
@@ -6,19 +6,23 @@ $PATCHER_VERSION = "1.0"
 $SUPPORTED_FLUENTY_VERSION = "1.14.0"
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "                    LuaTools для Millenium                " -ForegroundColor Cyan
-Write-Host "                      Версия патчера: $PATCHER_VERSION" -ForegroundColor Cyan
-Write-Host "      Автор: Le Maxime (t.me/lemaxime)                    " -ForegroundColor Cyan
+Write-Host (([char[]](32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,76,117,97,84,111,111,108,115,32,1076,1083,1103,32,77,105,108,108,101,110,105,117,109,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32) -join "")) -ForegroundColor Cyan
+Write-Host (([char[]](32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,1042,1077,1088,1089,1080,1103,32,1087,1072,1090,1095,1077,1088,1072,58,32) -join "") + $PATCHER_VERSION) -ForegroundColor Cyan
+Write-Host (([char[]](32,32,32,32,32,32,1040,1074,1090,1086,1088,58,32,76,101,32,77,97,120,105,109,101,32,40,116,46,109,101,47,108,101,109,97,120,105,109,101,41,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32) -join "")) -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 $steam_skin_path = "C:\Program Files (x86)\Steam\steamui\skins\fluenty"
 $local_workspace_path = "g:\work\fluenty"
-$script_dir = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+$script_dir = $null
+if ($MyInvocation.MyCommand -and $MyInvocation.MyCommand.Path) {
+    $script_dir = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
 if ([string]::IsNullOrEmpty($script_dir)) {
     $script_dir = $PSScriptRoot
 }
 if ([string]::IsNullOrEmpty($script_dir)) {
-    $script_dir = Get-Location
+    $script_dir = (Get-Location).Path
 }
 $sibling_path = Join-Path $script_dir "fluenty"
 
@@ -40,26 +44,26 @@ if (Test-Path $steam_skin_path) {
 $css_code_file = Join-Path $script_dir "quick-css-code.css"
 
 if ($null -eq $theme_dir) {
-    Write-Host "ОШИБКА: Директория темы Fluenty не найдена!" -ForegroundColor Red
-    Write-Host "Убедитесь, что тема установлена по одному из путей:"
+    Write-Host (([char[]](1054,1064,1048,1041,1050,1040,58,32,1044,1080,1088,1077,1082,1090,1086,1088,1080,1103,32,1090,1077,1084,1099,32,70,108,117,101,110,116,121,32,1085,1077,32,1085,1072,1081,1076,1077,1085,1072,33) -join "")) -ForegroundColor Red
+    Write-Host (([char[]](1059,1073,1077,1076,1080,1090,1077,1089,1100,44,32,1095,1090,1086,32,1090,1077,1084,1072,32,1091,1089,1090,1072,1085,1086,1074,1083,1077,1085,1072,32,1087,1086,32,1086,1076,1085,1086,1084,1091,32,1080,1079,32,1087,1091,1090,1077,1081,58) -join ""))
     Write-Host "  - $steam_skin_path"
-    Write-Host "  - или папка 'fluenty' находится рядом с этим патчером."
-    Read-Host "`nНажмите Enter для выхода..."
+    Write-Host (([char[]](32,32,45,32,1080,1083,1080,32,1087,1072,1087,1082,1072,32,39,102,108,117,101,110,116,121,39,32,1085,1072,1093,1086,1076,1080,1090,1089,1103,32,1088,1103,1076,1086,1084,32,1089,32,1101,1090,1080,1084,32,1087,1072,1090,1095,1077,1088,1086,1084,46) -join ""))
+    Read-Host (([char[]](10,1053,1072,1078,1084,1080,1090,1077,32,69,110,116,101,114,32,1076,1083,1103,32,1074,1099,1093,1086,1076,1072,46,46,46) -join ""))
     Exit 1
 }
 
-# 1. Проверяем права администратора перед какими-либо действиями
+# 1. Check admin privileges before proceeding
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin -and $theme_dir.StartsWith("C:\Program Files", [System.StringComparison]::OrdinalIgnoreCase)) {
-    Write-Host "Для модификации файлов темы в Program Files требуются права администратора." -ForegroundColor Yellow
-    Write-Host "Перезапуск от имени администратора..." -ForegroundColor Yellow
+    Write-Host (([char[]](1044,1083,1103,32,1084,1086,1076,1080,1092,1080,1082,1072,1094,1080,1080,32,1092,1072,1081,1083,1086,1074,32,1090,1077,1084,1099,32,1074,32,80,114,111,103,114,97,109,32,70,105,108,101,115,32,1090,1088,1077,1073,1091,1102,1090,1089,1103,32,1087,1088,1072,1074,1072,32,1072,1076,1084,1080,1085,1080,1089,1090,1088,1072,1090,1086,1088,1072,46) -join "")) -ForegroundColor Yellow
+    Write-Host (([char[]](1055,1077,1088,1077,1079,1072,1087,1091,1089,1082,32,1086,1090,32,1080,1084,1077,1085,1080,32,1072,1076,1084,1080,1085,1080,1089,1090,1088,1072,1090,1086,1088,1072,46,46,46) -join "")) -ForegroundColor Yellow
     Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
     Exit
 }
 
-Write-Host "Активная папка темы обнаружена:`n$theme_dir`n" -ForegroundColor Green
+Write-Host (([char[]](1040,1082,1090,1080,1074,1085,1072,1103,32,1087,1072,1087,1082,1072,32,1090,1077,1084,1099,32,1086,1073,1085,1072,1088,1091,1078,1077,1085,1072,58,10) -join "") + $theme_dir + "`r`n") -ForegroundColor Green
 
-# 2. Проверяем версию установленной темы
+# 2. Check installed theme version
 $installed_version = $null
 $skin_json_path = Join-Path $theme_dir "skin.json"
 if (Test-Path $skin_json_path) {
@@ -67,7 +71,7 @@ if (Test-Path $skin_json_path) {
         $skin_data = Get-Content -Raw -Path $skin_json_path | ConvertFrom-Json
         $installed_version = $skin_data.version
     } catch {
-        # Резервный поиск регуляркой, если JSON кривой
+        # Fallback regex check if JSON parsing fails
         $skin_text = Get-Content -Raw -Path $skin_json_path
         if ($skin_text -match '"version"\s*:\s*"([^"]+)"') {
             $installed_version = $Matches[1]
@@ -75,28 +79,28 @@ if (Test-Path $skin_json_path) {
     }
 }
 
-Write-Host "Поддерживаемая версия темы Fluenty: $SUPPORTED_FLUENTY_VERSION" -ForegroundColor Gray
+Write-Host (([char[]](1055,1086,1076,1076,1077,1088,1078,1080,1074,1072,1077,1084,1072,1103,32,1074,1077,1088,1089,1080,1103,32,1090,1077,1084,1099,32,70,108,117,101,110,116,121,58,32) -join "") + $SUPPORTED_FLUENTY_VERSION) -ForegroundColor Gray
 if ($installed_version) {
-    Write-Host "Установленная версия темы Fluenty: $installed_version" -ForegroundColor Green
+    Write-Host (([char[]](1059,1089,1090,1072,1085,1086,1074,1083,1077,1085,1085,1072,1103,32,1074,1077,1088,1089,1080,1103,32,1090,1077,1084,1099,32,70,108,117,101,110,116,121,58,32) -join "") + $installed_version) -ForegroundColor Green
     if ($installed_version -ne $SUPPORTED_FLUENTY_VERSION) {
-        Write-Host "`n[ВНИМАНИЕ] Версия установленной темы ($installed_version) отличается от поддерживаемой ($SUPPORTED_FLUENTY_VERSION)!" -ForegroundColor Yellow
-        Write-Host "Не гарантируется корректная работа патчей на этой версии." -ForegroundColor Yellow
-        $choice = Read-Host "Вы всё равно хотите продолжить? (Y/N)"
-        if ($choice -notmatch '^(y|yes|д|да)$') {
-            Write-Host "Операция отменена пользователем." -ForegroundColor Red
-            Read-Host "`nНажмите Enter для выхода..."
+        Write-Host (([char[]](10,91,1042,1053,1048,1052,1040,1053,1048,1045,93,32,1042,1077,1088,1089,1080,1103,32,1091,1089,1090,1072,1085,1086,1074,1083,1077,1085,1085,1086,1081,32,1090,1077,1084,1099,32,40) -join "") + $installed_version + ([char[]](41,32,1086,1090,1083,1080,1095,1072,1077,1090,1089,1103,32,1086,1090,32,1087,1086,1076,1076,1077,1088,1078,1080,1074,1072,1077,1084,1086,1081,32,40) -join "") + $SUPPORTED_FLUENTY_VERSION + ([char[]](41,33) -join "")) -ForegroundColor Yellow
+        Write-Host (([char[]](1053,1077,32,1075,1072,1088,1072,1085,1090,1080,1088,1091,1077,1090,1089,1103,32,1082,1086,1088,1088,1077,1082,1090,1085,1072,1103,32,1088,1072,1073,1086,1090,1072,32,1087,1072,1090,1095,1077,1081,32,1085,1072,32,1101,1090,1086,1081,32,1074,1077,1088,1089,1080,1080,46) -join "")) -ForegroundColor Yellow
+        $choice = Read-Host (([char[]](1042,1099,32,1074,1089,1105,32,1088,1072,1074,1085,1086,32,1093,1086,1090,1080,1090,1077,32,1087,1088,1086,1076,1086,1083,1078,1080,1090,1100,63,32,40,89,47,78,41) -join ""))
+        if ($choice -notmatch '^(y|yes|d|da)$') {
+            Write-Host (([char[]](1054,1087,1077,1088,1072,1094,1080,1103,32,1086,1090,1084,1077,1085,1077,1085,1072,32,1087,1086,1083,1100,1079,1086,1074,1072,1090,1077,1083,1077,1084,46) -join "")) -ForegroundColor Red
+            Read-Host (([char[]](10,1053,1072,1078,1084,1080,1090,1077,32,69,110,116,101,114,32,1076,1083,1103,32,1074,1099,1093,1086,1076,1072,46,46,46) -join ""))
             Exit
         }
         Write-Host ""
     }
 } else {
-    Write-Host "Установленная версия темы Fluenty: не определена (файл skin.json отсутствует или поврежден)" -ForegroundColor Yellow
+    Write-Host (([char[]](1059,1089,1090,1072,1085,1086,1074,1083,1077,1085,1085,1072,1103,32,1074,1077,1088,1089,1080,1103,32,1090,1077,1084,1099,32,70,108,117,101,110,116,121,58,32,1085,1077,32,1086,1087,1088,1077,1076,1077,1083,1077,1085,1072,32,40,1092,1072,1081,1083,32,115,107,105,110,46,106,115,111,110,32,1086,1090,1089,1091,1090,1089,1090,1074,1091,1077,1090,32,1080,1083,1080,32,1087,1086,1074,1088,1077,1078,1076,1077,1085,41) -join "")) -ForegroundColor Yellow
 }
 
 # -------------------------------------------------------------------------
-# ШАГ 1: ДИНАМИЧЕСКИЕ ИНЪЕКЦИИ JS
+# STEP 1: DYNAMIC JS INJECTIONS
 # -------------------------------------------------------------------------
-Write-Host "[ШАГ 1] Выполнение динамических JS-инъекций..."
+Write-Host (([char[]](91,1064,1040,1043,32,49,93,32,1042,1099,1087,1086,1083,1085,1077,1085,1080,1077,32,1076,1080,1085,1072,1084,1080,1095,1077,1089,1082,1080,1093,32,74,83,45,1080,1085,1098,1077,1082,1094,1080,1081,46,46,46) -join ""))
 Start-Sleep -Milliseconds 300
 
 $sidebar_path = Join-Path $theme_dir "src\scripts\components\sidebar.js"
@@ -107,25 +111,25 @@ if (Test-Path $sidebar_path) {
         $content = [System.IO.File]::ReadAllText($sidebar_path, [System.Text.Encoding]::UTF8)
 
         $translations = @{
-            'title="Go back"' = 'title="Назад"'
-            'title="Store"' = 'title="Магазин"'
-            'text">Store</div>' = 'text">Магазин</div>'
-            'title="Library"' = 'title="Библиотека"'
-            'text">Library</div>' = 'text">Библиотека</div>'
-            'title="Collections"' = 'title="Коллекции"'
-            'text">Collections</div>' = 'text">Коллекции</div>'
-            'title="Community"' = 'title="Сообщество"'
-            'text">Community</div>' = 'text">Сообщество</div>'
-            'title="Market"' = 'title="Торговая площадка"'
-            'text">Market</div>' = 'text">Торговая площадка</div>'
-            'title="Activity"' = 'title="Активность"'
-            'text">Activity</div>' = 'text">Активность</div>'
-            'title="Downloads"' = 'title="Загрузки"'
-            'text">Downloads</div>' = 'text">Загрузки</div>'
-            'title="Friends"' = 'title="Друзья"'
-            'text">Friends</div>' = 'text">Друзья</div>'
-            'title="Settings"' = 'title="Настройки"'
-            'text">Settings</div>' = 'text">Настройки</div>'
+            'title="Go back"' = 'title="' + ([char[]](1053,1072,1079,1072,1076) -join "") + '"'
+            'title="Store"' = 'title="' + ([char[]](1052,1072,1075,1072,1079,1080,1085) -join "") + '"'
+            'text">Store</div>' = 'text">' + ([char[]](1052,1072,1075,1072,1079,1080,1085) -join "") + '</div>'
+            'title="Library"' = 'title="' + ([char[]](1041,1080,1073,1083,1080,1086,1090,1077,1082,1072) -join "") + '"'
+            'text">Library</div>' = 'text">' + ([char[]](1041,1080,1073,1083,1080,1086,1090,1077,1082,1072) -join "") + '</div>'
+            'title="Collections"' = 'title="' + ([char[]](1050,1086,1083,1083,1077,1082,1094,1080,1080) -join "") + '"'
+            'text">Collections</div>' = 'text">' + ([char[]](1050,1086,1083,1083,1077,1082,1094,1080,1080) -join "") + '</div>'
+            'title="Community"' = 'title="' + ([char[]](1057,1086,1086,1073,1097,1077,1089,1090,1074,1086) -join "") + '"'
+            'text">Community</div>' = 'text">' + ([char[]](1057,1086,1086,1073,1097,1077,1089,1090,1074,1086) -join "") + '</div>'
+            'title="Market"' = 'title="' + ([char[]](1058,1086,1088,1075,1086,1074,1072,1103,32,1087,1083,1086,1097,1072,1076,1082,1072) -join "") + '"'
+            'text">Market</div>' = 'text">' + ([char[]](1058,1086,1088,1075,1086,1074,1072,1103,32,1087,1083,1086,1097,1072,1076,1082,1072) -join "") + '</div>'
+            'title="Activity"' = 'title="' + ([char[]](1040,1082,1090,1080,1074,1085,1086,1089,1090,1100) -join "") + '"'
+            'text">Activity</div>' = 'text">' + ([char[]](1040,1082,1090,1080,1074,1085,1086,1089,1090,1100) -join "") + '</div>'
+            'title="Downloads"' = 'title="' + ([char[]](1047,1072,1075,1088,1091,1079,1082,1080) -join "") + '"'
+            'text">Downloads</div>' = 'text">' + ([char[]](1047,1072,1075,1088,1091,1079,1082,1080) -join "") + '</div>'
+            'title="Friends"' = 'title="' + ([char[]](1044,1088,1091,1079,1100,1103) -join "") + '"'
+            'text">Friends</div>' = 'text">' + ([char[]](1044,1088,1091,1079,1100,1103) -join "") + '</div>'
+            'title="Settings"' = 'title="' + ([char[]](1053,1072,1089,1090,1088,1086,1081,1082,1080) -join "") + '"'
+            'text">Settings</div>' = 'text">' + ([char[]](1053,1072,1089,1090,1088,1086,1081,1082,1080) -join "") + '</div>'
         }
 
         foreach ($eng in $translations.Keys) {
@@ -134,17 +138,9 @@ if (Test-Path $sidebar_path) {
 
         # Inject LuaTools sidebar HTML if missing
         if ($content -notlike '*id="luatools-sidebar-btn"*') {
-            $old_section_pattern = '(?s)<div title="Настройки" class="button" id="settings">\s*<div class="icon"></div>\s*<div class="text">Настройки</div>\s*</div>'
-            $new_section = @'
-<div title="Настройки" class="button" id="settings">
-				<div class="icon"></div>
-				<div class="text">Настройки</div>
-			</div>
-			<div title="LuaTools" class="button" id="luatools-sidebar-btn" style="display: none;">
-				<div class="icon"></div>
-				<div class="text">LuaTools</div>
-			</div>
-'@
+            $nas = ([char[]](1053,1072,1089,1090,1088,1086,1081,1082,1080) -join "")
+            $old_section_pattern = '(?s)<div title="' + $nas + '" class="button" id="settings">\s*<div class="icon"></div>\s*<div class="text">' + $nas + '</div>\s*</div>'
+            $new_section = "<div title=`"$nas`" class=`"button`" id=`"settings`">`r`n`t`t`t`t<div class=`"icon`"></div>`r`n`t`t`t`t<div class=`"text`">$nas</div>`r`n`t`t`t</div>`r`n`t`t`t<div title=`"LuaTools`" class=`"button`" id=`"luatools-sidebar-btn`" style=`"display: none;`">`r`n`t`t`t`t<div class=`"icon`"></div>`r`n`t`t`t`t<div class=`"text`">LuaTools</div>`r`n`t`t`t</div>"
             $content = [regex]::Replace($content, $old_section_pattern, $new_section)
         }
 
@@ -179,13 +175,13 @@ sideBarDiv.querySelector('#settings').addEventListener('click', () => window.ope
         }
 
         [System.IO.File]::WriteAllText($sidebar_path, $content, [System.Text.Encoding]::UTF8)
-        Write-Host "  [+] Файл sidebar.js успешно переведен и пропатчен!" -ForegroundColor Green
+        Write-Host (([char[]](32,32,91,43,93,32,1060,1072,1081,1083,32,115,105,100,101,98,97,114,46,106,115,32,1091,1089,1087,1077,1096,1085,1086,32,1087,1077,1088,1077,1074,1077,1076,1077,1085,32,1080,32,1087,1088,1086,1087,1072,1090,1095,1077,1085,33) -join "")) -ForegroundColor Green
         $sidebar_success = $true
     } catch {
-        Write-Host "  [-] Не удалось пропатчить sidebar.js: $_" -ForegroundColor Red
+        Write-Host (([char[]](32,32,91,45,93,32,1053,1077,32,1091,1076,1072,1083,1086,1089,1100,32,1087,1088,1086,1087,1072,1090,1095,1080,1090,1100,32,115,105,100,101,98,97,114,46,106,115,58,32) -join "") + $_) -ForegroundColor Red
     }
 } else {
-    Write-Host "  [-] Файл sidebar.js не найден по пути: $sidebar_path" -ForegroundColor Yellow
+    Write-Host (([char[]](32,32,91,45,93,32,1060,1072,1081,1083,32,115,105,100,101,98,97,114,46,106,115,32,1085,1077,32,1085,1072,1081,1076,1077,1085,32,1087,1086,32,1087,1091,1090,1080,58,32) -join "") + $sidebar_path) -ForegroundColor Yellow
 }
 
 $viewgame_path = Join-Path $theme_dir "src\styles\webkit\viewGame.js"
@@ -307,37 +303,37 @@ Millennium.findElement(document, '.customGameTags.reviews').then(() => {
         }
 
         [System.IO.File]::WriteAllText($viewgame_path, $content, [System.Text.Encoding]::UTF8)
-        Write-Host "  [+] Файл viewGame.js успешно пропатчен!" -ForegroundColor Green
+        Write-Host (([char[]](32,32,91,43,93,32,1060,1072,1081,1083,32,118,105,101,119,71,97,109,101,46,106,115,32,1091,1089,1087,1077,1096,1085,1086,32,1087,1088,1086,1087,1072,1090,1095,1077,1085,33) -join "")) -ForegroundColor Green
         $viewgame_success = $true
     } catch {
-        Write-Host "  [-] Не удалось пропатчить viewGame.js: $_" -ForegroundColor Red
+        Write-Host (([char[]](32,32,91,45,93,32,1053,1077,32,1091,1076,1072,1083,1086,1089,1100,32,1087,1088,1086,1087,1072,1090,1095,1080,1090,1100,32,118,105,101,119,71,97,109,101,46,106,115,58,32) -join "") + $_) -ForegroundColor Red
     }
 } else {
-    Write-Host "  [-] Файл viewGame.js не найден по пути: $viewgame_path" -ForegroundColor Yellow
+    Write-Host (([char[]](32,32,91,45,93,32,1060,1072,1081,1083,32,118,105,101,119,71,97,109,101,46,106,115,32,1085,1077,32,1085,1072,1081,1076,1077,1085,32,1087,1086,32,1087,1091,1090,1080,58,32) -join "") + $viewgame_path) -ForegroundColor Yellow
 }
 
 if ($sidebar_success -and $viewgame_success) {
-    Write-Host "`n[УСПЕХ] ШАГ 1 ЗАВЕРШЕН! JS-файлы успешно переведены и модифицированы.`n" -ForegroundColor Green
+    Write-Host (([char[]](10,91,1059,1057,1055,1045,1061,93,32,1064,1040,1043,32,49,32,1047,1040,1042,1045,1056,1064,1045,1053,33,32,74,83,45,1092,1072,1081,1083,1099,32,1091,1089,1087,1077,1096,1085,1086,32,1087,1077,1088,1077,1074,1077,1076,1077,1085,1099,32,1080,32,1084,1086,1076,1080,1092,1080,1094,1080,1088,1086,1074,1072,1085,1099,46,10) -join "")) -ForegroundColor Green
 } else {
-    Write-Host "`n[ВНИМАНИЕ] ШАГ 1 ЗАВЕРШЕН С ОШИБКАМИ. Проверьте сообщения выше.`n" -ForegroundColor Yellow
+    Write-Host (([char[]](10,91,1042,1053,1048,1052,1040,1053,1048,1045,93,32,1064,1040,1043,32,49,32,1047,1040,1042,1045,1056,1064,1045,1053,32,1057,32,1054,1064,1048,1041,1050,1040,1052,1048,46,32,1055,1088,1086,1074,1077,1088,1100,1090,1077,32,1089,1086,1086,1073,1097,1077,1085,1080,1103,32,1074,1099,1096,1077,46,10) -join "")) -ForegroundColor Yellow
 }
 
 # -------------------------------------------------------------------------
-# ШАГ 2: СОЗДАНИЕ QUICK CSS И КОПИРОВАНИЕ В БУФЕР ОБМЕНА
+# STEP 2: CREATE QUICK CSS AND COPY TO CLIPBOARD
 # -------------------------------------------------------------------------
-Write-Host "[ШАГ 2] Подготовка стилей Quick CSS..."
+Write-Host (([char[]](91,1064,1040,1043,32,50,93,32,1055,1086,1076,1075,1086,1090,1086,1074,1082,1072,32,1089,1090,1080,1083,1077,1081,32,81,117,105,99,107,32,67,83,83,46,46,46) -join ""))
 Start-Sleep -Milliseconds 300
 
 $css_content = @'
-/* --- Иконка LuaTools в боковом меню --- */
+/* --- LuaTools Sidebar Icon --- */
 .section #luatools-sidebar-btn.button .icon::before {
-	content: '' !important;
+	content: '\e0a0' !important;
 }
 .section #luatools-sidebar-btn.button:active .icon::before {
-	content: '' !important;
+	content: '\e0a1' !important;
 }
 
-/* --- Оформление плашек (Denuvo / Online-Fix) и кнопок заголовка --- */
+/* --- Game Title Header & Buttons --- */
 .customGameTitleHeader {
 	position: relative !important;
 	display: flex !important;
@@ -448,32 +444,32 @@ $css_content = @'
 
 try {
     [System.IO.File]::WriteAllText($css_code_file, $css_content, [System.Text.Encoding]::UTF8)
-    Write-Host "  [+] Стили Quick CSS сохранены в файл: $css_code_file" -ForegroundColor Green
+    Write-Host (([char[]](32,32,91,43,93,32,1057,1090,1080,1083,1080,32,81,117,105,99,107,32,67,83,83,32,1089,1086,1093,1088,1072,1085,1077,1085,1099,32,1074,32,1092,1072,1081,1083,58,32) -join "") + $css_code_file) -ForegroundColor Green
 } catch {
-    Write-Host "  [-] Не удалось записать CSS-файл: $_" -ForegroundColor Red
+    Write-Host (([char[]](32,32,91,45,93,32,1053,1077,32,1091,1076,1072,1083,1086,1089,1100,32,1079,1072,1087,1080,1089,1072,1090,1100,32,67,83,83,45,1092,1072,1081,1083,58,32) -join "") + $_) -ForegroundColor Red
 }
 
 try {
     Set-Clipboard -Value $css_content -ErrorAction Stop
-    Write-Host "  [+] Код стилей АВТОМАТИЧЕСКИ скопирован в буфер обмена Windows!" -ForegroundColor Green
+    Write-Host (([char[]](32,32,91,43,93,32,1050,1086,1076,32,1089,1090,1080,1083,1077,1081,32,1040,1042,1058,1054,1052,1040,1058,1048,1063,1045,1057,1050,1048,32,1089,1082,1086,1087,1080,1088,1086,1074,1072,1085,32,1074,32,1073,1091,1092,1077,1088,32,1086,1073,1084,1077,1085,1072,32,87,105,110,100,111,119,115,33) -join "")) -ForegroundColor Green
 } catch {
     try {
         Add-Type -AssemblyName System.Windows.Forms
         [System.Windows.Forms.Clipboard]::SetText($css_content)
-        Write-Host "  [+] Код стилей АВТОМАТИЧЕСКИ скопирован в буфер обмена Windows!" -ForegroundColor Green
+        Write-Host (([char[]](32,32,91,43,93,32,1050,1086,1076,32,1089,1090,1080,1083,1077,1081,32,1040,1042,1058,1054,1052,1040,1058,1048,1063,1045,1057,1050,1048,32,1089,1082,1086,1087,1080,1088,1086,1074,1072,1085,32,1074,32,1073,1091,1092,1077,1088,32,1086,1073,1084,1077,1085,1072,32,87,105,110,100,111,119,115,33) -join "")) -ForegroundColor Green
     } catch {
-        Write-Host "  [-] Не удалось скопировать код автоматически. Вы можете скопировать его вручную из файла: $css_code_file" -ForegroundColor Yellow
+        Write-Host (([char[]](32,32,91,45,93,32,1053,1077,32,1091,1076,1072,1083,1086,1089,1100,32,1089,1082,1086,1087,1080,1088,1086,1074,1072,1090,1100,32,1082,1086,1076,32,1072,1074,1090,1086,1084,1072,1090,1080,1095,1077,1089,1082,1080,46,32,1042,1099,32,1084,1086,1078,1077,1090,1077,32,1089,1082,1086,1087,1080,1088,1086,1074,1072,1090,1100,32,1077,1075,1086,32,1074,1088,1091,1095,1085,1091,1102,32,1080,1079,32,1092,1072,1081,1083,1072,58,32) -join "") + $css_code_file) -ForegroundColor Yellow
     }
 }
 
 Write-Host "`n==========================================================" -ForegroundColor Cyan
-Write-Host "                     ИНСТРУКЦИЯ                           " -ForegroundColor Cyan
+Write-Host (([char[]](32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,1048,1053,1057,1058,1056,1059,1050,1062,1048,1071,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32,32) -join "")) -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "1. Откройте настройки Millennium в клиенте Steam."
-Write-Host "2. Перейдите в раздел 'Quick CSS' (Окно ввода стилей)."
-Write-Host "3. Просто нажмите Ctrl+V, чтобы вставить готовые стили."
-Write-Host "4. Сохраните и обновите тему скина!"
+Write-Host (([char[]](49,46,32,1054,1090,1082,1088,1086,1081,1090,1077,32,1085,1072,1089,1090,1088,1086,1081,1082,1080,32,77,105,108,108,101,110,110,105,117,109,32,1074,32,1082,1083,1080,1077,1085,1090,1077,32,83,116,101,97,109,46) -join ""))
+Write-Host (([char[]](50,46,32,1055,1077,1088,1077,1081,1076,1080,1090,1077,32,1074,32,1088,1072,1079,1076,1077,1083,32,39,81,117,105,99,107,32,67,83,83,39,32,40,1054,1082,1085,1086,32,1074,1074,1086,1076,1072,32,1089,1090,1080,1083,1077,1081,41,46) -join ""))
+Write-Host (([char[]](51,46,32,1055,1088,1086,1089,1090,1086,32,1085,1072,1078,1084,1080,1090,1077,32,67,116,114,108,43,86,44,32,1095,1090,1086,1073,1099,32,1074,1089,1090,1072,1074,1080,1090,1100,32,1075,1086,1090,1086,1074,1099,1077,32,1089,1090,1080,1083,1080,46) -join ""))
+Write-Host (([char[]](52,46,32,1057,1086,1093,1088,1072,1085,1080,1090,1077,32,1080,32,1086,1073,1085,1086,1074,1080,1090,1077,32,1090,1077,1084,1091,32,1089,1082,1080,1085,1072,33) -join ""))
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "`nВсе шаги успешно выполнены!" -ForegroundColor Green
+Write-Host (([char[]](10,1042,1089,1077,32,1096,1072,1075,1080,32,1091,1089,1087,1077,1096,1085,1086,32,1074,1099,1087,1086,1083,1085,1077,1085,1099,33) -join "")) -ForegroundColor Green
 
-Read-Host "`nНажмите Enter для выхода..."
+Read-Host (([char[]](10,1053,1072,1078,1084,1080,1090,1077,32,69,110,116,101,114,32,1076,1083,1103,32,1074,1099,1093,1086,1076,1072,46,46,46) -join ""))
