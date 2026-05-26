@@ -1,0 +1,7 @@
+:root {
+    /* Fluenty Standarization */
+	/* Outer border */
+	--border-8px: 8px;
+	/* Inner border */
+	--border-4px: 4px;
+}

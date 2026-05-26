@@ -1,0 +1,8 @@
+.profile_header_content .playerAvatar.offline img,
+.profile_header_content .playerAvatar.offline,
+.profile_header_content .playerAvatar.online img,
+.profile_header_content .playerAvatar.online,
+.profile_header_content .playerAvatar.in-game,
+.profile_header_content .playerAvatar.in-game img {
+    border-radius: inherit !important;
+}

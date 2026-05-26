@@ -1,0 +1,9 @@
+#footer {
+    display: none !important;
+}
+
+.home_ctn.content_more,
+.home_ctn.bottom_content {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
