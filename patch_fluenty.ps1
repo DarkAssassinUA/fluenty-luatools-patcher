@@ -2,8 +2,12 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::InputEncoding = [System.Text.Encoding]::UTF8
 
+$PATCHER_VERSION = "1.0"
+$SUPPORTED_FLUENTY_VERSION = "1.14.0"
+
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host "                    LuaTools для Millenium                " -ForegroundColor Cyan
+Write-Host "                      Версия патчера: $PATCHER_VERSION" -ForegroundColor Cyan
 Write-Host "      Автор: Le Maxime (t.me/lemaxime)                    " -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 
@@ -44,6 +48,7 @@ if ($null -eq $theme_dir) {
     Exit 1
 }
 
+# 1. Проверяем права администратора перед какими-либо действиями
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin -and $theme_dir.StartsWith("C:\Program Files", [System.StringComparison]::OrdinalIgnoreCase)) {
     Write-Host "Для модификации файлов темы в Program Files требуются права администратора." -ForegroundColor Yellow
@@ -53,6 +58,40 @@ if (-not $isAdmin -and $theme_dir.StartsWith("C:\Program Files", [System.StringC
 }
 
 Write-Host "Активная папка темы обнаружена:`n$theme_dir`n" -ForegroundColor Green
+
+# 2. Проверяем версию установленной темы
+$installed_version = $null
+$skin_json_path = Join-Path $theme_dir "skin.json"
+if (Test-Path $skin_json_path) {
+    try {
+        $skin_data = Get-Content -Raw -Path $skin_json_path | ConvertFrom-Json
+        $installed_version = $skin_data.version
+    } catch {
+        # Резервный поиск регуляркой, если JSON кривой
+        $skin_text = Get-Content -Raw -Path $skin_json_path
+        if ($skin_text -match '"version"\s*:\s*"([^"]+)"') {
+            $installed_version = $Matches[1]
+        }
+    }
+}
+
+Write-Host "Поддерживаемая версия темы Fluenty: $SUPPORTED_FLUENTY_VERSION" -ForegroundColor Gray
+if ($installed_version) {
+    Write-Host "Установленная версия темы Fluenty: $installed_version" -ForegroundColor Green
+    if ($installed_version -ne $SUPPORTED_FLUENTY_VERSION) {
+        Write-Host "`n[ВНИМАНИЕ] Версия установленной темы ($installed_version) отличается от поддерживаемой ($SUPPORTED_FLUENTY_VERSION)!" -ForegroundColor Yellow
+        Write-Host "Не гарантируется корректная работа патчей на этой версии." -ForegroundColor Yellow
+        $choice = Read-Host "Вы всё равно хотите продолжить? (Y/N)"
+        if ($choice -notmatch '^(y|yes|д|да)$') {
+            Write-Host "Операция отменена пользователем." -ForegroundColor Red
+            Read-Host "`nНажмите Enter для выхода..."
+            Exit
+        }
+        Write-Host ""
+    }
+} else {
+    Write-Host "Установленная версия темы Fluenty: не определена (файл skin.json отсутствует или поврежден)" -ForegroundColor Yellow
+}
 
 # -------------------------------------------------------------------------
 # ШАГ 1: ДИНАМИЧЕСКИЕ ИНЪЕКЦИИ JS
