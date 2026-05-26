@@ -52,18 +52,29 @@ if ($null -eq $theme_dir) {
     Exit 1
 }
 
-# 1. Check admin privileges before proceeding
+# 1. Ask for confirmation before starting installation (to prevent instant closing)
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Read-Host (([char[]](1053,1072,1078,1084,1080,1090,1077,32,69,110,116,101,114,32,1076,1083,1103,32,1085,1072,1095,1072,1083,1072,32,1091,1089,1090,1072,1085,1086,1074,1082,1080,46,46,46) -join ""))
+}
+
+# 2. Check admin privileges before proceeding and elevate if needed
 if (-not $isAdmin -and $theme_dir.StartsWith("C:\Program Files", [System.StringComparison]::OrdinalIgnoreCase)) {
     Write-Host (([char[]](1044,1083,1103,32,1084,1086,1076,1080,1092,1080,1082,1072,1094,1080,1080,32,1092,1072,1081,1083,1086,1074,32,1090,1077,1084,1099,32,1074,32,80,114,111,103,114,97,109,32,70,105,108,101,115,32,1090,1088,1077,1073,1091,1102,1090,1089,1103,32,1087,1088,1072,1074,1072,32,1072,1076,1084,1080,1085,1080,1089,1090,1088,1072,1090,1086,1088,1072,46) -join "")) -ForegroundColor Yellow
     Write-Host (([char[]](1055,1077,1088,1077,1079,1072,1087,1091,1089,1082,32,1086,1090,32,1080,1084,1077,1085,1080,32,1072,1076,1084,1080,1085,1080,1089,1090,1088,1072,1090,1086,1088,1072,46,46,46) -join "")) -ForegroundColor Yellow
-    Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    
+    if ($PSCommandPath) {
+        Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    } else {
+        $online_cmd = "irm https://raw.githubusercontent.com/DarkAssassinUA/fluenty-luatools-patcher/main/patch_fluenty.ps1 | iex"
+        Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"$online_cmd`"" -Verb RunAs
+    }
     Exit
 }
 
 Write-Host (([char[]](1040,1082,1090,1080,1074,1085,1072,1103,32,1087,1072,1087,1082,1072,32,1090,1077,1084,1099,32,1086,1073,1085,1072,1088,1091,1078,1077,1085,1072,58,10) -join "") + $theme_dir + "`r`n") -ForegroundColor Green
 
-# 2. Check installed theme version
+# 3. Check installed theme version
 $installed_version = $null
 $skin_json_path = Join-Path $theme_dir "skin.json"
 if (Test-Path $skin_json_path) {
