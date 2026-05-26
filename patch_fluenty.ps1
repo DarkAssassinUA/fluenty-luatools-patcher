@@ -6,7 +6,7 @@ param (
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::InputEncoding = [System.Text.Encoding]::UTF8
 
-$PATCHER_VERSION = "1.0"
+$PATCHER_VERSION = "1.2"
 $SUPPORTED_FLUENTY_VERSION = "1.14.0"
 
 Write-Host "==========================================================" -ForegroundColor Cyan
